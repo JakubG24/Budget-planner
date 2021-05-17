@@ -1,0 +1,9 @@
+{% extends 'index.html' %}
+{% block account %}
+<h1>Welcome {{ user.username }}</h1>
+<form method="POST">
+    {% csrf_token %}
+<div><button type="submit">Change password</button></div>
+</form>
+    {{ msg }}
+{% endblock %}

@@ -15,6 +15,7 @@
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Home</a>
       <ul class="navbar-nav px-3" style="display: flex; flex-direction: row; align-items: center;">
       {% if user.is_authenticated %}
+        <li><span class="nav-item text-white-50">Logged as: {{ user.username }}</span></li>
         <li><a class="navbar navbar-dark" href="{% url 'logout' %}">Logout</a></li>
       {% else %}
         <li><a class="navbar navbar-dark" href="{% url 'login' %}">Login</a></li>
@@ -27,9 +28,16 @@
       <div class="row">
         {% include 'partials/_sidebar.html' %}
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-          {% block content %}
+            {% if user.is_authenticated == False %}
+            {% block content %}
+              <div class="container">
+                <p>log in to start planning your budget</p>
+              </div>
+            {% endblock %}
+            {% endif %}
+            {% block account %}
 
-          {% endblock %}
+            {% endblock %}
         </main>
       </div>
     </div>
