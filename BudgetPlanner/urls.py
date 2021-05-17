@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.IndexView.as_view(), name='index'),
     path('accounts/', include('accounts.urls')),
+    path('income/my_income/', views.IncomeView.as_view(), name='income_panel'),
 ]
