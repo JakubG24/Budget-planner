@@ -31,7 +31,7 @@
     </thead>
 
     <tbody>
-      {% for income in incomes %}
+      {% for income in income_list %}
       <tr>
         <td>{{ income.amount }}</td>
         <td>{{ income.description }}</td>
@@ -48,23 +48,44 @@
   </table>
 </div>
 
+<ul class="pagination">
+{% if pages.has_previous %}
+<li>
+    <a href="?page={{ pages.previous_page_number }}"><i class="fa fa-chevron-left"
+                                                          aria-hidden="true"></i>&nbsp previous &nbsp</a>
+</li>
+{% else %}
+<li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
+{% endif %}
+{% if pages.number|add:'-4' > 1 %}
+<li>
+    <a href="?page={{ pages.number|add:'-5' }}"> &hellip;</a>
+</li>
+{% endif %}
+{% for i in pages.paginator.page_range %}
+{% if pages.number == i %}
+    <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only">(current)</span></span></li>
+{% elif i > pages.number|add:'-5' and i < pages.number|add:'5' %}
+<li>
+    <a href="?page={{ i }}">&nbsp{{ i }}&nbsp</a>
+</li>
+{% endif %}
+{% endfor %}
 
-{#<div class="pagination-container">#}
-{#    <div class="">#}
-{#        Showing page {{page_obj.number}} of {{ page_obj.paginator.num_pages }}#}
-{#    </div>#}
-{#    <ul class="pagination align-right float-right mr-auto">#}
-{#      {% if page_obj.has_previous %}#}
-{#      <li {% if page_obj.number == 1 %} class="page-item active" {% endif %}><a class="page-link" href="?page=1">&laquo; 1</a></li>#}
-{#      <li class="page-item"> <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>#}
-{#      {% endif %}#}
-{#      {% if page_obj.has_next %}#}
-{#      <li class="page-item"> <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>#}
-{#      <li class="page-item"> <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages}} &raquo;</a></li>#}
-{#      {% endif %}#}
-{#      </ul>#}
-{#    {% endif %}#}
-{#  </div>#}
+{% if recipes.paginator.num_pages > recipes.number|add:'4' %}
+<li>
+    <a href="?page={{ pages.number|add:'5' }}"> &hellip;</a>
+</li>
+{% endif %}
 
-
+{% if pages.has_next %}
+<li>
+<a href="?page={{ pages.next_page_number }}">&nbsp next &nbsp<i class="fa fa-chevron-right"
+                      aria-hidden="true"></i></a>
+</li>
+{% else %}
+    <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
+{% endif %}
+</ul>
 {% endblock %}
+<script src="https://kit.fontawesome.com/06eaff2cf4.js" crossorigin="anonymous"></script>
