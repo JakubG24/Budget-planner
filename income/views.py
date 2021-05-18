@@ -29,10 +29,9 @@ class AddIncomeView(LoginRequiredMixin, View):
         amount = request.POST['amount']
         description = request.POST['description']
         date = request.POST['income_date']
-        categories = self.request.POST['categoriesString'].split(',')
-        for category in categories:
-            source = IncomeSource.objects.create(name=category)
-            income = Income.objects.create(amount=amount, description=description, date=date, user=request.user,
-                                           source=source)
-            income.save()
+        source = request.POST['income_source']
+        income_source = IncomeSource.objects.create(name=source, user=request.user)
+        income = Income.objects.create(amount=amount, description=description, date=date, source=income_source,
+                                       user=request.user)
+        income.save()
         return redirect(reverse_lazy('income_panel'))
