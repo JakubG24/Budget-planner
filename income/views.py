@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 
-from income.models import Income
+from income.models import Income, IncomeSource
 
 
 class IndexView(View):
@@ -14,7 +14,7 @@ class IndexView(View):
 
 class IncomeView(LoginRequiredMixin, View):
     def get(self, request):
-        income = Income.objects.filter(user=request.user).order_by('date')
+        income = Income.objects.filter(user=request.user).order_by('-date')
         paginator = Paginator(income, 1)
         page_number = request.GET.get('page')
         page = paginator.get_page(page_number)
@@ -29,6 +29,10 @@ class AddIncomeView(LoginRequiredMixin, View):
         amount = request.POST['amount']
         description = request.POST['description']
         date = request.POST['income_date']
-        income = Income.objects.create(amount=amount, description=description, date=date, user=request.user)
-        income.save()
+        categories = self.request.POST['categoriesString'].split(',')
+        for category in categories:
+            source = IncomeSource.objects.create(name=category)
+            income = Income.objects.create(amount=amount, description=description, date=date, user=request.user,
+                                           source=source)
+            income.save()
         return redirect(reverse_lazy('income_panel'))
