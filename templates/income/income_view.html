@@ -37,10 +37,15 @@
         <td>{{ income.source }}</td>
         <td>{{ income.date }}</td>
         <td>{{ income.description }}</td>
+          <form method="POST" onsubmit="
+                  return confirm(`Do you want to delete income {{ income.description }}: {{ income.amount }}?`)">
+                {% csrf_token %}
         <td>
-          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
-          <a href="#" class="btn btn-secondary btn-sm">Delete</a>
+            <a href="{{ income.get_absolute_url }}" class="btn btn-secondary btn-sm">Edit</a>
+            <input type="hidden" value="{{ income.id }}" name="income_id">
+            <button class="btn btn-secondary btn-sm">Delete</button>
         </td>
+          </form>
 
       {% empty %}
         <td class="no-results">No results</td>

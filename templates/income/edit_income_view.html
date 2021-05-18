@@ -1,37 +1,38 @@
 {% extends 'index.html' %}
 {% block account %}
-{% load static %}
-    <link href="{% static 'css/add_income.css' %}" rel="stylesheet"/>
 <div class="container mt-4">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a href="{% url 'income_panel' %}">Income</a>
       </li>
-      <li class="breadcrumb-item active" aria-current="page">Add Income</li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Income</li>
     </ol>
   </nav>
 
   <div class="card">
     <div class="card-body">
-      <form action="#" method="post" onkeydown="return event.key !== 'Enter';">
+      <form method="post" onkeydown="return event.key !== 'Enter';">
       {% csrf_token %}
         <div class="form-group">
           <label for="">Amount</label>
           <input type="number" step="any" class="form-control form-control-sm" name="amount"
-                 min="0" oninput="validity.valid||(value='');" required/>
+                 min="0" oninput="validity.valid||(value='');" value="{{ income.amount }}" required/>
         </div>
         <div class="form-group">
           <label for="">Description</label>
-          <input type="text" class="form-control form-control-sm" name="description" required/>
+          <input type="text" class="form-control form-control-sm" name="description"
+                 value="{{ income.description }}" required/>
         </div>
          <div class="form-group">
           <label for="">Date</label>
-          <input type="date" class="form-control form-control-sm" name="income_date" required/>
+          <input type="date" class="form-control form-control-sm" name="income_date"
+                 value="{{ income.date }}" required/>
         </div>
         <div class="form-group">
           <label for="">Source</label>
-            <input type="text" class="form-control form-control-sm" name="income_source" id="income_source" required/>
+            <input type="text" class="form-control form-control-sm" name="income_source" id="income_source"
+                   value="{{ income.source }}" required/>
 {#            <input type="hidden" name="categoriesString">#}
 {#            <ul id="categoriesContainer">#}
 {#            </ul>#}
@@ -42,5 +43,4 @@
     </div>
   </div>
 </div>
-<script src="{% static 'js/add_income.js' %}"></script>
 {% endblock %}
