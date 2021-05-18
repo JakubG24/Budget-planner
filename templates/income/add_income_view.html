@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+{% block account %}
+{% load static %}
+    <link href="{% static 'css/add_income.css' %}" rel="stylesheet"/>
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'income_panel' %}">Income</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Add Income</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-body">
+      <form action="#" method="post" onkeydown="return event.key !== 'Enter';">
+      {% csrf_token %}
+        <div class="form-group">
+          <label for="">Amount</label>
+          <input type="number" step="any" class="form-control form-control-sm" name="amount"
+                 value="{{values.amount}}" min="0" oninput="validity.valid||(value='');"/>
+        </div>
+        <div class="form-group">
+          <label for="">Description</label>
+          <input type="text" class="form-control form-control-sm" name="description" value="{{values.description}}"/>
+        </div>
+         <div class="form-group">
+          <label for="">Date</label>
+          <input type="date" class="form-control form-control-sm" name="income_date"/>
+        </div>
+        <div class="form-group">
+          <label for="categoryInput">Sources</label>
+            <input type="text" name="categoryInput" id="categoryInput" multiple>
+            <input type="hidden" name="categoriesString">
+            <ul id="categoriesContainer">
+
+            </ul>
+
+        </div>
+          <button type="submit" class="btn btn-primary btn-primary-sm">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/add_income.js' %}"></script>
+{% endblock %}

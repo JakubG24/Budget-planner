@@ -1,0 +1,7 @@
+form ul li.category {
+    display: inline-block;
+    background-color: #868e96;
+    color: black;
+    padding: 5px 10px;
+    margin-right: 5px;
+}
