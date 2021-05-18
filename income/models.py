@@ -23,6 +23,8 @@ class Income(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE)
     source = models.ForeignKey(IncomeSource, on_delete=CASCADE)
 
+    def get_absolute_url(self):
+        return f'/income/my_income/edit/{self.id}/'
 
 
 
