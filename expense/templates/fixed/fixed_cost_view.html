@@ -6,17 +6,15 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="">Expenses</a>
+            <span>Fixed costs</span>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            My Expenses
-          </li>
+          <li class="breadcrumb-item active" aria-current="page">My Expenses</li>
         </ol>
       </nav>
     </div>
 
     <div class="col-md-2">
-      <a href="#" class="btn btn-primary">Add Expense</a>
+      <a href="{% url 'add_fixed' %}" class="btn btn-primary">Add Expense</a>
     </div>
   </div>
 
@@ -56,7 +54,7 @@
           <button class="btn btn-secondary btn-sm">Delete</button>
         </td>
       {% empty %}
-      <td><p class="no-results" style="display: none;">No results </p></td>
+      <td><p class="no-results">No results </p></td>
       </tr>
       {% endfor %}
     </tbody>

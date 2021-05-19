@@ -13,3 +13,8 @@ class FixedCostView(LoginRequiredMixin, View):
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'fixed/fixed_cost_view.html', {'pages': page, 'expenses': fixed_costs})
+
+
+class AddFixedCostView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'fixed/add_fixed_cost_view.html')
