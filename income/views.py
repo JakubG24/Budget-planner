@@ -16,9 +16,9 @@ class IndexView(View):
 class IncomeView(LoginRequiredMixin, View):
     def get(self, request):
         income = Income.objects.filter(user=request.user).order_by('-date')
-        paginator = Paginator(income, 1)
+        paginator = Paginator(income, 2)
         page_number = request.GET.get('page')
-        page = paginator.get_page(page_number)
+        page = Paginator.get_page(paginator, page_number)
         return render(request, 'income/income_view.html', {'income_list': income, 'pages': page})
 
     def post(self, request):

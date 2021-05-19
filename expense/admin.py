@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from expense.models import FixedCosts, FixedCostSource
+
+admin.site.register(FixedCosts)
+admin.site.register(FixedCostSource)

@@ -1,0 +1,111 @@
+{% extends 'index.html' %}
+{% block account %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="">Expenses</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            My Expenses
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="col-md-2">
+      <a href="#" class="btn btn-primary">Add Expense</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-4">
+
+        <div class="form-group">
+          <input type="text" class="form-control" id="searchField" placeholder="Search">
+        </div>
+      </div>
+    </div>
+<div class="app-table">
+
+  <table class="table table-stripped table-hover">
+    <thead>
+      <tr>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for expense in pages %}
+      <tr>
+        <td>{{expense.amount}}</td>
+        <td>{{expense.category}}</td>
+        <td>{{expense.description}}</td>
+        <td>{{expense.date}}</td>
+        <td>
+          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
+          <button class="btn btn-secondary btn-sm">Delete</button>
+        </td>
+      {% empty %}
+      <td><p class="no-results" style="display: none;">No results </p></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+<div class="pagination-container">
+    <ul class="pagination">
+        {% if pages.has_previous %}
+            <li>
+                <a href="?page={{ pages.previous_page_number }}"><i class="fa fa-chevron-left"
+                                                              aria-hidden="true"></i>&nbsp previous &nbsp</a>
+            </li>
+        {% else %}
+            <li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
+        {% endif %}
+        {% if pages.number|add:'-4' > 1 %}
+            <li>
+                <a href="?page={{ pages.number|add:'-5' }}"> &hellip;</a>
+            </li>
+        {% endif %}
+        {% for i in pages.paginator.page_range %}
+            {% if pages.number == i %}
+                <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only">(current)</span></span></li>
+            {% elif i > pages.number|add:'-5' and i < pages.number|add:'5' %}
+        <li>
+            <a href="?page={{ i }}">&nbsp{{ i }}&nbsp</a>
+        </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pages.paginator.num_pages > pages.number|add:'4' %}
+        <li>
+            <a href="?page={{ pages.number|add:'5' }}"> &hellip;</a>
+        </li>
+        {% endif %}
+
+        {% if pages.has_next %}
+            <li>
+                <a href="?page={{ pages.next_page_number }}">&nbsp next &nbsp<i class="fa fa-chevron-right"
+                          aria-hidden="true"></i></a>
+            </li>
+        {% else %}
+            <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
+        {% endif %}
+    </ul>
+</div>
+</div>
+</div>
+{% endblock %}
