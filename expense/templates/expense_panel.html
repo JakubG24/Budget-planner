@@ -5,19 +5,18 @@
     <div class="col-md-10">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <span><a href="{% url 'expense_panel' %}">My Expenses</a></span>
+          <li class="breadcrumb-item active" aria-current="page">
+            <span>My Expenses</span>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">Fixed Costs</li>
         </ol>
       </nav>
     </div>
     <div class="row">
         <ul>
-            <li style="display: inline-block"><a href="{% url 'create_category_fixed' %}" class="btn btn-primary">
-                Create Category</a></li>
-            <li style="display: inline-block"><a href="{% url 'add_fixed' %}" class="btn btn-primary">
-                Add Expense</a></li>
+            <li style="display: inline-block"><a href="{% url 'fixed_cost_view' %}" class="btn btn-primary">
+                Fixed costs</a></li>
+            <li style="display: inline-block"><a href="{% url 'variable_cost_view' %}" class="btn btn-primary">
+                Variable costs</a></li>
         </ul>
     </div>
 
@@ -31,12 +30,12 @@
   <table class="table table-stripped table-hover">
     <thead>
       <tr>
-        <th>Amount</th>
-        <th>Category</th>
-        <th>Source</th>
-        <th>Description</th>
-        <th>Date</th>
-        <th>Options</th>
+        <th>kolumna1</th>
+        <th>kolumna2</th>
+        <th>kolumna3</th>
+        <th></th>
+        <th></th>
+        <th></th>
       </tr>
     </thead>
 
@@ -52,7 +51,7 @@
                 onsubmit="return confirm(`Do you want to delete expense {{ expense.description }}: {{ expense.amount }}?`)">
               {% csrf_token %}
         <td>
-          <a href="{{ expense.get_absolute_url }}" class="btn btn-secondary btn-sm">Edit</a>
+          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
           <input type="hidden" value="{{ expense.id }}" name="expense_id">
           <button class="btn btn-secondary btn-sm">Delete</button>
         </td>
