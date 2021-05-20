@@ -8,15 +8,15 @@
           <li class="breadcrumb-item">
             <span><a href="{% url 'expense_panel' %}">My Expenses</a></span>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">Fixed Costs</li>
+          <li class="breadcrumb-item active" aria-current="page">Variable Costs</li>
         </ol>
       </nav>
     </div>
     <div class="row">
         <ul>
-            <li style="display: inline-block"><a href="{% url 'create_category_fixed' %}" class="btn btn-primary">
+            <li style="display: inline-block"><a href="#" class="btn btn-primary">
                 Create Category</a></li>
-            <li style="display: inline-block"><a href="{% url 'add_fixed' %}" class="btn btn-primary">
+            <li style="display: inline-block"><a href="#" class="btn btn-primary">
                 Add Expense</a></li>
         </ul>
     </div>
@@ -52,7 +52,7 @@
                 onsubmit="return confirm(`Do you want to delete expense {{ expense.description }}: {{ expense.amount }}?`)">
               {% csrf_token %}
         <td>
-          <a href="{{ expense.get_absolute_url }}" class="btn btn-secondary btn-sm">Edit</a>
+          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
           <input type="hidden" value="{{ expense.id }}" name="expense_id">
           <button class="btn btn-secondary btn-sm">Delete</button>
         </td>

@@ -28,6 +28,8 @@ class FixedCosts(models.Model):
     category = models.ForeignKey(FixedCostSourceCategory, on_delete=CASCADE, null=True)
     source = models.ForeignKey(FixedCostSource, on_delete=CASCADE)
 
+    def get_absolute_url(self):
+        return f'/expense/fixed_costs/edit/{self.id}/'
 
 class VariableCostSource(models.Model):
     name = models.CharField(max_length=64)

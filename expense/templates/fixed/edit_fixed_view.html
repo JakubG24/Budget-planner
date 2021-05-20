@@ -4,9 +4,12 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="{% url 'income_panel' %}">Income</a>
+        <span><a href="{% url 'expense_panel' %}">My Expenses</a></span>
       </li>
-      <li class="breadcrumb-item active" aria-current="page">Edit Income</li>
+      <li class="breadcrumb-item">
+        <span><a href="{% url 'fixed_cost_view' %}">Fixed Costs</a></span>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Fixed Cost</li>
     </ol>
   </nav>
 
@@ -16,22 +19,22 @@
       {% csrf_token %}
         <div class="form-group">
           <label for="">Amount</label>
-          <input type="number" step="any" class="form-control form-control-sm" name="income_amount"
-                 min="0" oninput="validity.valid||(value='');" value="{{ income.amount }}" required/>
+          <input type="number" step="any" class="form-control form-control-sm" name="expense_amount"
+                 min="0" oninput="validity.valid||(value='');" value="{{ expense.amount }}" required/>
         </div>
         <div class="form-group">
           <label for="">Description</label>
-          <input type="text" class="form-control form-control-sm" name="income_description"
-                 value="{{ income.description }}" required/>
+          <input type="text" class="form-control form-control-sm" name="expense_description"
+                 value="{{ expense.description }}" required/>
         </div>
          <div class="form-group">
           <label for="">Date</label>
-          <input type="date" class="form-control form-control-sm" name="income_date"
-                 value="{{ income.date }}" required/>
+          <input type="date" class="form-control form-control-sm" name="expense_date"
+                 value="{{ expense.date }}" required/>
         </div>
         <div class="form-group">
           <label for="">Category</label>
-          <select class="form-control" name="income_category" required>
+          <select class="form-control" name="expense_category" required>
               {% for category in categories %}
               <option>{{ category.name }}</option>
               {% endfor %}
@@ -39,7 +42,7 @@
         </div>
         <div class="form-group">
           <label for="">Source</label>
-          <select class="form-control" name="income_source" required>
+          <select class="form-control" name="expense_source" required>
               {% for source in sources %}
               <option>{{ source }}</option>
               {% endfor %}

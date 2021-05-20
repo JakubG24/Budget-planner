@@ -1,16 +1,17 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.db.models import Sum
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 
-from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource
+from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource, VariableCosts
 
 
 class FixedCostView(LoginRequiredMixin, View):
     def get(self, request):
         fixed_costs = FixedCosts.objects.filter(user=request.user)
-        paginator = Paginator(fixed_costs, 2)
+        paginator = Paginator(fixed_costs, 5)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'fixed/fixed_cost_view.html', {'pages': page, 'expenses': fixed_costs})
@@ -18,7 +19,7 @@ class FixedCostView(LoginRequiredMixin, View):
     def post(self, request):
         expense_id = request.POST['expense_id']
         FixedCosts.objects.get(pk=expense_id).delete()
-        return redirect(reverse_lazy('income_panel'))
+        return redirect(reverse_lazy('fixed_cost_view'))
 
 
 class AddFixedCostView(LoginRequiredMixin, View):
@@ -37,13 +38,35 @@ class AddFixedCostView(LoginRequiredMixin, View):
         source = FixedCostSource.objects.get(id=source_id)
         FixedCosts.objects.create(amount=amount, description=description, user=request.user, date=date,
                                   source=source, category=category)
-        return redirect(reverse_lazy('expense_panel'))
+        return redirect(reverse_lazy('fixed_cost_view'))
 
+
+class EditFixedCostView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        categories = FixedCostSourceCategory.objects.filter(user_id=request.user)
+        sources = FixedCostSource.objects.all().prefetch_related('fixedcostsourcecategory_set')
+        expense_id = get_object_or_404(FixedCosts, pk=id)
+        return render(request, 'fixed/edit_fixed_view.html', {'expense': expense_id, 'categories': categories,
+                                                              'sources': sources})
+
+    def post(self, request, id):
+        get_expense = get_object_or_404(FixedCosts, pk=id)
+        get_source = FixedCostSource.objects.get(pk=get_expense.source_id)
+        get_category = FixedCostSourceCategory.objects.get(pk=get_expense.category_id)
+        get_category.name = request.POST['expense_category']
+        get_source.name = request.POST['expense_source']
+        get_expense.amount = request.POST['expense_amount']
+        get_expense.description = request.POST['expense_description']
+        get_expense.date = request.POST['expense_date']
+        get_category.save()
+        get_expense.save()
+        get_source.save()
+        return redirect(reverse_lazy('fixed_cost_view'))
 
 
 class CreateCategoryView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'fixed/add_category_view.html')
+        return render(request, 'add_category_view.html')
 
     def post(self, request):
         category_name = request.POST['fixed_category']
@@ -51,4 +74,23 @@ class CreateCategoryView(LoginRequiredMixin, View):
         for elem in array:
             source = FixedCostSource.objects.create(name=elem, user=request.user)
         FixedCostSourceCategory.objects.create(name=category_name, user=request.user, sources=source)
-        return redirect(reverse_lazy('expense_panel'))
+        return redirect(reverse_lazy('fixed_cost_view'))
+
+
+class ExpensePanelView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'expense_panel.html')
+
+
+class VariableCostView(LoginRequiredMixin, View):
+    def get(self, request):
+        variable_costs = VariableCosts.objects.filter(user=request.user)
+        paginator = Paginator(variable_costs, 5)
+        page_number = request.GET.get('page')
+        page = Paginator.get_page(paginator, page_number)
+        return render(request, 'variable/variable_cost_view.html', {'pages': page, 'expenses': variable_costs})
+
+    def post(self, request):
+        expense_id = request.POST['expense_id']
+        VariableCosts.objects.get(pk=expense_id).delete()
+        return redirect(reverse_lazy('variable_cost_view'))
