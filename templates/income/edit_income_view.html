@@ -30,13 +30,14 @@
                  value="{{ income.date }}" required/>
         </div>
         <div class="form-group">
+          <label for="">Category</label>
+            <input type="text" class="form-control form-control-sm" name="income_category" id="income_category"
+                   value="{{ income.category }}" required/>
+        </div>
+        <div class="form-group">
           <label for="">Source</label>
             <input type="text" class="form-control form-control-sm" name="income_source" id="income_source"
                    value="{{ income.source }}" required/>
-{#            <input type="hidden" name="categoriesString">#}
-{#            <ul id="categoriesContainer">#}
-{#            </ul>#}
-
         </div>
           <button type="submit" class="btn btn-primary btn-primary-sm">Submit</button>
       </form>

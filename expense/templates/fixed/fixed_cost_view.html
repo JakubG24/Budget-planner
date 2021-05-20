@@ -6,31 +6,26 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="">Expenses</a>
+            <span>Fixed costs</span>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            My Expenses
-          </li>
+          <li class="breadcrumb-item active" aria-current="page">My Expenses</li>
         </ol>
       </nav>
     </div>
-
-    <div class="col-md-2">
-      <a href="#" class="btn btn-primary">Add Expense</a>
+    <div class="row">
+        <ul>
+            <li style="display: inline-block"><a href="{% url 'create_category_fixed' %}" class="btn btn-primary">
+                Create Category</a></li>
+            <li style="display: inline-block"><a href="{% url 'add_fixed' %}" class="btn btn-primary">
+                Add Expense</a></li>
+        </ul>
     </div>
+
   </div>
 
   <div class="container">
 
-    <div class="row">
-      <div class="col-md-8"></div>
-      <div class="col-md-4">
 
-        <div class="form-group">
-          <input type="text" class="form-control" id="searchField" placeholder="Search">
-        </div>
-      </div>
-    </div>
 <div class="app-table">
 
   <table class="table table-stripped table-hover">
@@ -38,6 +33,7 @@
       <tr>
         <th>Amount</th>
         <th>Category</th>
+        <th>Source</th>
         <th>Description</th>
         <th>Date</th>
         <th>Options</th>
@@ -49,14 +45,20 @@
       <tr>
         <td>{{expense.amount}}</td>
         <td>{{expense.category}}</td>
+        <td>{{expense.source}}</td>
         <td>{{expense.description}}</td>
         <td>{{expense.date}}</td>
+          <form method="POST"
+                onsubmit="return confirm(`Do you want to delete expense {{ expense.description }}: {{ expense.amount }}?`)">
+              {% csrf_token %}
         <td>
           <a href="#" class="btn btn-secondary btn-sm">Edit</a>
+          <input type="hidden" value="{{ expense.id }}" name="expense_id">
           <button class="btn btn-secondary btn-sm">Delete</button>
         </td>
+          </form>
       {% empty %}
-      <td><p class="no-results" style="display: none;">No results </p></td>
+      <td><p class="no-results">No results </p></td>
       </tr>
       {% endfor %}
     </tbody>
