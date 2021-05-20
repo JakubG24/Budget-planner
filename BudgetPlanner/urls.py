@@ -25,6 +25,7 @@ urlpatterns = [
     path('expense/', include('expense.urls')),
     path('income/my_income/', views.IncomeView.as_view(), name='income_panel'),
     path('income/my_income/add_income/', views.AddIncomeView.as_view(), name='add_income'),
-    path('income/my_income/edit/<int:id>/', views.EditIncomeView.as_view(), name='edit_income')
+    path('income/my_income/edit/<int:id>/', views.EditIncomeView.as_view(), name='edit_income'),
+    path('income/create_category/', views.CreateIncomeCategoryView.as_view(), name='income_category'),
 
 ]

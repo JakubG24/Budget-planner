@@ -12,8 +12,13 @@
         </ol>
       </nav>
     </div>
-    <div class="col-md-2">
-      <a href="{% url 'add_income' %}" class="btn btn-primary">Add Income</a>
+    <div class="row">
+        <ul>
+            <li style="display: inline-block"><a href="{% url 'income_category' %}" class="btn btn-primary">
+                Create Category</a></li>
+            <li style="display: inline-block"><a href="{% url 'add_income' %}" class="btn btn-primary">
+                Add Income</a></li>
+        </ul>
     </div>
   </div>
 </div>
@@ -23,9 +28,10 @@
     <thead>
       <tr>
         <th>Amount</th>
+        <th>Category</th>
         <th>Source</th>
-        <th>Date</th>
         <th>Description</th>
+        <th>Date</th>
         <th>Options</th>
       </tr>
     </thead>
@@ -34,9 +40,10 @@
       {% for income in pages %}
       <tr>
         <td>{{ income.amount }}</td>
+        <td>{{ income.category }}</td>
         <td>{{ income.source }}</td>
-        <td>{{ income.date }}</td>
         <td>{{ income.description }}</td>
+        <td>{{ income.date }}</td>
           <form method="POST" onsubmit="
                   return confirm(`Do you want to delete income {{ income.description }}: {{ income.amount }}?`)">
                 {% csrf_token %}

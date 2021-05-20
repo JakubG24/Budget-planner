@@ -5,12 +5,19 @@ from django.db.models import CASCADE
 
 class FixedCostSource(models.Model):
     name = models.CharField(max_length=64)
+    user = models.ForeignKey(User, on_delete=CASCADE, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class FixedCostSourceCategory(models.Model):
     name = models.CharField(max_length=64)
-    user_id = models.ForeignKey(User, on_delete=CASCADE)
-    source = models.ManyToManyField(FixedCostSource)
+    user = models.ForeignKey(User, on_delete=CASCADE)
+    sources = models.ForeignKey(FixedCostSource, on_delete=CASCADE, null=True)
+    
+    def __str__(self):
+        return self.name
 
 
 class FixedCosts(models.Model):
@@ -18,6 +25,7 @@ class FixedCosts(models.Model):
     date = models.DateField()
     description = models.TextField(max_length=128)
     user = models.ForeignKey(User, on_delete=CASCADE)
+    category = models.ForeignKey(FixedCostSourceCategory, on_delete=CASCADE, null=True)
     source = models.ForeignKey(FixedCostSource, on_delete=CASCADE)
 
 
