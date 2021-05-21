@@ -4,7 +4,9 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import CreateView
 
+from expense.forms import FixedCostForm
 from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource, VariableCosts
 
 
@@ -22,23 +24,36 @@ class FixedCostView(LoginRequiredMixin, View):
         return redirect(reverse_lazy('fixed_cost_view'))
 
 
-class AddFixedCostView(LoginRequiredMixin, View):
-    def get(self, request):
-        categories = FixedCostSourceCategory.objects.filter(user_id=request.user)
-        sources = FixedCostSource.objects.all().prefetch_related('fixedcostsourcecategory_set')
-        return render(request, 'fixed/add_fixed_cost_view.html', {'categories': categories, 'sources': sources})
+# class AddFixedCostView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         categories = FixedCostSourceCategory.objects.filter(user_id=request.user)
+#         sources = FixedCostSource.objects.all().prefetch_related('fixedcostsourcecategory_set')
+#         return render(request, 'fixed/add_fixed_cost_view.html', {'categories': categories, 'sources': sources})
+#
+#     def post(self, request):
+#         amount = request.POST['fixed_amount']
+#         description = request.POST['fixed_description']
+#         date = request.POST['fixed_date']
+#         category_id = request.POST['category_id']
+#         category = FixedCostSourceCategory.objects.get(id=category_id)
+#         source_id = request.POST['source_id']
+#         source = FixedCostSource.objects.get(id=source_id)
+#         FixedCosts.objects.create(amount=amount, description=description, user=request.user, date=date,
+#                                   source=source, category=category)
+#         return redirect(reverse_lazy('fixed_cost_view'))
 
-    def post(self, request):
-        amount = request.POST['fixed_amount']
-        description = request.POST['fixed_description']
-        date = request.POST['fixed_date']
-        category_id = request.POST['category_id']
-        category = FixedCostSourceCategory.objects.get(id=category_id)
-        source_id = request.POST['source_id']
-        source = FixedCostSource.objects.get(id=source_id)
-        FixedCosts.objects.create(amount=amount, description=description, user=request.user, date=date,
-                                  source=source, category=category)
-        return redirect(reverse_lazy('fixed_cost_view'))
+
+class AddFixedCostView(LoginRequiredMixin, CreateView):
+    model = FixedCosts
+    form_class = FixedCostForm
+    template_name = 'fixed/add_fixed_cost_view.html'
+    success_url = reverse_lazy('fixed_cost_view')
+
+
+def load_sources(request):
+    category_id = request.GET.get('category')
+    sources = FixedCostSource.objects.filter(source_id=category_id)
+    return render(request, 'source_dropdown_list_option.html', {'sources': sources})
 
 
 class EditFixedCostView(LoginRequiredMixin, View):
@@ -73,7 +88,7 @@ class CreateCategoryView(LoginRequiredMixin, View):
         array = request.POST['categoriesString'].split(',')
         for elem in array:
             source = FixedCostSource.objects.create(name=elem, user=request.user)
-        FixedCostSourceCategory.objects.create(name=category_name, user=request.user, sources=source)
+        FixedCostSourceCategory.objects.create(name=category_name, user=request.user, source=source)
         return redirect(reverse_lazy('fixed_cost_view'))
 
 
