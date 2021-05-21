@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -24,30 +25,15 @@ class FixedCostView(LoginRequiredMixin, View):
         return redirect(reverse_lazy('fixed_cost_view'))
 
 
-# class AddFixedCostView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         categories = FixedCostSourceCategory.objects.filter(user_id=request.user)
-#         sources = FixedCostSource.objects.all().prefetch_related('fixedcostsourcecategory_set')
-#         return render(request, 'fixed/add_fixed_cost_view.html', {'categories': categories, 'sources': sources})
-#
-#     def post(self, request):
-#         amount = request.POST['fixed_amount']
-#         description = request.POST['fixed_description']
-#         date = request.POST['fixed_date']
-#         category_id = request.POST['category_id']
-#         category = FixedCostSourceCategory.objects.get(id=category_id)
-#         source_id = request.POST['source_id']
-#         source = FixedCostSource.objects.get(id=source_id)
-#         FixedCosts.objects.create(amount=amount, description=description, user=request.user, date=date,
-#                                   source=source, category=category)
-#         return redirect(reverse_lazy('fixed_cost_view'))
-
-
 class AddFixedCostView(LoginRequiredMixin, CreateView):
     model = FixedCosts
     form_class = FixedCostForm
-    template_name = 'fixed/add_fixed_cost_view.html'
     success_url = reverse_lazy('fixed_cost_view')
+    template_name = 'fixed/add_fixed_cost_view.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(AddFixedCostView, self).form_valid(form)
 
 
 def load_sources(request):
