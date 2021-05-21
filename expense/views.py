@@ -86,9 +86,9 @@ class CreateCategoryView(LoginRequiredMixin, View):
     def post(self, request):
         category_name = request.POST['fixed_category']
         array = request.POST['categoriesString'].split(',')
+        category = FixedCostSourceCategory.objects.create(name=category_name, user=request.user)
         for elem in array:
-            source = FixedCostSource.objects.create(name=elem, user=request.user)
-        FixedCostSourceCategory.objects.create(name=category_name, user=request.user, source=source)
+            FixedCostSource.objects.create(name=elem, user=request.user, source=category)
         return redirect(reverse_lazy('fixed_cost_view'))
 
 
