@@ -42,28 +42,6 @@ def load_sources(request):
     return render(request, 'source_dropdown_list_option.html', {'sources': sources})
 
 
-# class EditFixedCostView(LoginRequiredMixin, View):
-#     def get(self, request, id):
-#         categories = FixedCostSourceCategory.objects.filter(user_id=request.user)
-#         sources = FixedCostSource.objects.all().prefetch_related('fixedcostsourcecategory_set')
-#         expense_id = get_object_or_404(FixedCosts, pk=id)
-#         return render(request, 'fixed/edit_fixed_view.html', {'expense': expense_id, 'categories': categories,
-#                                                               'sources': sources})
-#
-#     def post(self, request, id):
-#         get_expense = get_object_or_404(FixedCosts, pk=id)
-#         get_source = FixedCostSource.objects.get(pk=get_expense.source_id)
-#         get_category = FixedCostSourceCategory.objects.get(pk=get_expense.category_id)
-#         get_category.name = request.POST['expense_category']
-#         get_source.name = request.POST['expense_source']
-#         get_expense.amount = request.POST['expense_amount']
-#         get_expense.description = request.POST['expense_description']
-#         get_expense.date = request.POST['expense_date']
-#         get_category.save()
-#         get_expense.save()
-#         get_source.save()
-#         return redirect(reverse_lazy('fixed_cost_view'))
-
 class EditFixedCostView(LoginRequiredMixin, UpdateView):
     model = FixedCosts
     template_name = 'fixed/edit_fixed_view.html'
