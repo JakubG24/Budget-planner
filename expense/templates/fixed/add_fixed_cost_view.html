@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load widget_tweaks %}
 {% block account %}
 <link href="{% static 'css/add_category.css' %}" rel="stylesheet"/>
 <div class="container mt-4">
@@ -14,42 +15,69 @@
 
   <div class="card">
     <div class="card-body">
-      <form method="POST">
+      <form method="POST" id="fixedForm" data-sources-url="{% url 'ajax_load_sources' %}" novalidate>
         {% csrf_token %}
+        <table>
+{#            {{ form.as_table }}#}
+        </table>
+        {% for field in form.visible_fields %}
         <div class="form-group">
-          <label for="">Amount</label>
-          <input type="text" class="form-control form-control-sm" name="fixed_amount" value="" required/>
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:'form-control form-control-sm' }}
+            {% for error in field.errors %}
+                <span class="help">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="form-group">
-          <label for="">Description</label>
-          <input type="text" class="form-control form-control-sm" name="fixed_description" value="" required/>
-        </div>
-        <div class="form-group">
-          <label for="">Date</label>
-          <input type="date" class="form-control form-control-sm" name="fixed_date" required/>
-        </div>
-        <div class="form-group">
-          <label for="">Category</label>
-          <select class="form-control" name="category_id" required>
-              <option style="display: none;"></option>
-              {% for category in categories %}
-              <option value="{{ category.id }}">{{ category.name }}</option>
-              {% endfor %}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="">Source</label>
-          <select class="form-control" name="source_id" required>
-              <option style="display: none;"></option>
-              {% for source in sources %}
-              <option value="{{ source.id }}">{{ source }}</option>
-              {% endfor %}
-          </select>
-        </div>
+      {% endfor %}
+{#          <input type="text" class="form-control form-control-sm" name="fixed_amount" value="" required/>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <label for="">Description</label>#}
+{#          <input type="text" class="form-control form-control-sm" name="fixed_description" value="" required/>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <label for="">Date</label>#}
+{#          <input type="date" class="form-control form-control-sm" name="fixed_date" required/>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <label for="">Category</label>#}
+{#          <select class="form-control" name="category_id" required>#}
+{#              <option style="display: none;"></option>#}
+{#              {% for category in categories %}#}
+{#              <option value="{{ category.id }}">{{ category.name }}</option>#}
+{#              {% endfor %}#}
+{#          </select>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          <label for="">Source</label>#}
+{#          <select class="form-control" name="source_id" required>#}
+{#              <option style="display: none;"></option>#}
+{#              {% for source in sources %}#}
+{#              <option value="{{ source.id }}">{{ source }}</option>#}
+{#              {% endfor %}#}
+{#          </select>#}
+{#        </div>#}
         <button type="submit" class="btn btn-primary btn-primary-sm">Submit</button>
       </form>
     </div>
   </div>
 </div>
-<script src="{% static 'js/add_category.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    $("#id_category").change(function () {
+      var url = $("#fixedForm").attr("data-sources-url");
+      var categoryId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'category': categoryId
+        },
+        success: function(data) {
+          $("#id_source").html(data);
+        }
+      });
+
+    });
+  </script>
 {% endblock %}

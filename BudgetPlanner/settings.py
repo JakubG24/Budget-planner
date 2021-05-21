@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'income',
     'accounts',
     'expense',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
