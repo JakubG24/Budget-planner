@@ -1,5 +1,8 @@
+from datetime import datetime, date
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -17,7 +20,7 @@ class IndexView(View):
 class IncomeView(LoginRequiredMixin, View):
     def get(self, request):
         income = Income.objects.filter(user=request.user).order_by('-date')
-        paginator = Paginator(income, 5)
+        paginator = Paginator(income, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'income/income_view.html', {'income_list': income, 'pages': page})
@@ -59,3 +62,28 @@ class EditIncomeView(LoginRequiredMixin, UpdateView):
     template_name = 'income/edit_income_view.html'
     success_url = reverse_lazy('income_panel')
     fields = ('amount', 'date', 'description', 'category', 'source')
+
+
+class IncomeChartView(View):
+    def get(self, request):
+        labels = []
+        data = []
+        queryset = Income.objects.filter(user=request.user).annotate(month=TruncMonth('date')).values('month').\
+            annotate(c=Sum('amount')).values('month', 'c')
+        for income in queryset:
+            labels.append(income['month'])
+            data.append(income['c'])
+        total_amount = f'Total income: {sum(data)}'
+        return render(request, 'income/charts/current_year_chart.html', {'labels': labels, 'data': data, 'total': total_amount})
+
+    def post(self, request):
+        to_date = request.POST['to_date']
+        from_date = request.POST['from_date']
+        labels = []
+        data = []
+        queryset = Income.objects.filter(user=request.user, date__gte=from_date, date__lte=to_date)\
+            .values('category__name').annotate(category_amount=Sum('amount')).order_by('-category_amount')
+        for income in queryset:
+            labels.append(income['category__name'])
+            data.append(income['category_amount'])
+        return render(request, 'income/charts/date_filter_chart.html', {'labels': labels, 'data': data})
