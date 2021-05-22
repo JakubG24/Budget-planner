@@ -19,7 +19,7 @@
     <span style="display: flex; justify-content: center"><b>{{ total }}</b></span>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<canvas id="myChart" width="400" height="200"></canvas>
+<canvas id="myChart" width="450" height="200"></canvas>
 <script>
 let backgroundColors = [];
 let ctx = document.getElementById('myChart').getContext('2d');
@@ -30,8 +30,6 @@ let myChart = new Chart(ctx, {
         datasets: [{
             label: 'Income',
             data: [{% for item in data %}'{{ item }}', {% endfor %}],
-            fill: false,
-            tension: 0.05,
             backgroundColor: backgroundColors,
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
@@ -41,9 +39,12 @@ let myChart = new Chart(ctx, {
     },
     options: {
         scales: {
-            y: {
-                beginAtZero: true
-            }
+            xAxes:[{
+                barPercentage: 0.25,
+                gridLines: {
+                display:false
+        }
+    }]
         }
     }
 });

@@ -69,12 +69,13 @@ class IncomeChartView(View):
         labels = []
         data = []
         queryset = Income.objects.filter(user=request.user).annotate(month=TruncMonth('date')).values('month').\
-            annotate(c=Sum('amount')).values('month', 'c')
+            annotate(s=Sum('amount')).values('month', 's')
         for income in queryset:
             labels.append(income['month'])
-            data.append(income['c'])
-        total_amount = f'Total income: {sum(data)}'
-        return render(request, 'income/charts/current_year_chart.html', {'labels': labels, 'data': data, 'total': total_amount})
+            data.append(income['s'])
+        total_amount = f'Total income: {round(sum(data), 2)}'
+        return render(request, 'income/charts/current_year_chart.html', {'labels': labels, 'data': data,
+                                                                         'total': total_amount})
 
     def post(self, request):
         to_date = request.POST['to_date']
@@ -87,3 +88,4 @@ class IncomeChartView(View):
             labels.append(income['category__name'])
             data.append(income['category_amount'])
         return render(request, 'income/charts/date_filter_chart.html', {'labels': labels, 'data': data})
+
