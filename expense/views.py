@@ -126,7 +126,7 @@ class EditVariableCostView(LoginRequiredMixin, UpdateView):
     fields = ('amount', 'date', 'description', 'category', 'source')
 
 
-class ExpenseComparisonChartView(View):
+class ExpenseComparisonChartView(LoginRequiredMixin, View):
     def get(self, request):
         labels = []
         for x in range(1, 13):
@@ -147,4 +147,40 @@ class ExpenseComparisonChartView(View):
                 data2.append(0.0)
             else:
                 data2.append(queryset2[0]['s'])
-        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data, 'data2': data2})
+        total = round(sum(data) + sum(data2), 2)
+        return render(request, 'charts/expense_comparative_chart.html', {'total': total, 'labels': labels, 'data': data,
+                                                                        'data2': data2})
+
+
+class FixedCostsChartView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'charts/fixed_cost_chart.html')
+
+    def post(self, request):
+        to_date = request.POST['to_date']
+        from_date = request.POST['from_date']
+        labels = []
+        data = []
+        queryset = FixedCosts.objects.filter(user=request.user, date__gte=from_date, date__lte=to_date) \
+            .values('category__name').annotate(category_amount=Sum('amount')).order_by('-category_amount')
+        for expense in queryset:
+            labels.append(expense['category__name'])
+            data.append(expense['category_amount'])
+        return render(request, 'charts/fixed_cost_chart.html', {'labels': labels, 'data': data})
+
+
+class VariableCostsChartView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'charts/variable_cost_chart.html')
+
+    def post(self, request):
+        to_date = request.POST['to_date']
+        from_date = request.POST['from_date']
+        labels = []
+        data = []
+        queryset = VariableCosts.objects.filter(user=request.user, date__gte=from_date, date__lte=to_date) \
+            .values('category__name').annotate(category_amount=Sum('amount')).order_by('-category_amount')
+        for expense in queryset:
+            labels.append(expense['category__name'])
+            data.append(expense['category_amount'])
+        return render(request, 'charts/variable_cost_chart.html', {'labels': labels, 'data': data})

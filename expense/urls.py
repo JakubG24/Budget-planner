@@ -14,6 +14,7 @@ urlpatterns = [
     path('variable_costs/', views.VariableCostView.as_view(), name='variable_cost_view'),
     path('ajax/load-sources/', views.load_sources, name='ajax_load_sources'),
     path('ajax/load-sources/variable/', views.load_sources_variable, name='ajax_load_sources_variable'),
-    path('summary/fixed_costs/charts/', views.ExpenseComparisonChartView.as_view(), name='fixed_charts'),
-
+    path('summary/comparative_chart/', views.ExpenseComparisonChartView.as_view(), name='comparative_chart'),
+    path('summary/fixed_costs/chart/', views.FixedCostsChartView.as_view(), name='fixed_cost_chart'),
+    path('summary/variable_costs/chart/', views.VariableCostsChartView.as_view(), name='variable_cost_chart'),
 ]

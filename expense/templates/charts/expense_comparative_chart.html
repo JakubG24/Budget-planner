@@ -4,11 +4,11 @@
 <div class="row-cols-2">
     <div class="form-group col-md-4 col-lg-4">
         <label for=""><b style="font-size: 20px">Fixed costs</b></label>
-            <a href="#"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
+            <a href="{% url 'fixed_cost_chart' %}"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
     </div>
     <div class="form-group col-md-4 col-lg-4">
         <label for=""><b style="font-size: 20px">Variable costs</b></label>
-            <a href="#"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
+            <a href="{% url 'variable_cost_chart' %}"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
     </div>
 </div>
 
@@ -21,7 +21,6 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <canvas id="myChart" width="450" height="200"></canvas>
-{#    ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Septemper', 'October', 'November', 'December']#}
 <script>
 let fixedBackgroundColors = [];
 let variableBackgroundColors = [];
