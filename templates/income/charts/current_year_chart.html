@@ -40,7 +40,7 @@ let myChart = new Chart(ctx, {
     options: {
         scales: {
             xAxes:[{
-                barPercentage: 0.25,
+                barPercentage: 0.2,
                 gridLines: {
                 display:false
         }
@@ -49,7 +49,7 @@ let myChart = new Chart(ctx, {
     }
 });
 for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
-    if (myChart.data.datasets[0].data[i] > 100) {
+    if (myChart.data.datasets[0].data[i] >= 100) {
         backgroundColors.push("#0080ff");
     } else {
         backgroundColors.push("red");
