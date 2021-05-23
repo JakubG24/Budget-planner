@@ -1,8 +1,9 @@
+import calendar
 from datetime import datetime, date
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, ExtractMonth
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -68,10 +69,10 @@ class IncomeChartView(View):
     def get(self, request):
         labels = []
         data = []
-        queryset = Income.objects.filter(user=request.user).annotate(month=TruncMonth('date')).values('month').\
-            annotate(s=Sum('amount')).values('month', 's')
+        queryset = Income.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month').\
+            annotate(s=Sum('amount')).values('month', 's').order_by('month')
         for income in queryset:
-            labels.append(income['month'])
+            labels.append(calendar.month_name[income['month']])
             data.append(income['s'])
         total_amount = f'Total income: {round(sum(data), 2)}'
         return render(request, 'income/charts/current_year_chart.html', {'labels': labels, 'data': data,

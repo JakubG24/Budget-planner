@@ -1,7 +1,14 @@
+from datetime import datetime
+from itertools import chain
+from operator import attrgetter
+from xxlimited import Null
+
+import pandas as pd
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.db.models.functions import ExtractMonth
+import calendar
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -14,8 +21,8 @@ from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource,
 
 class FixedCostView(LoginRequiredMixin, View):
     def get(self, request):
-        fixed_costs = FixedCosts.objects.filter(user=request.user)
-        paginator = Paginator(fixed_costs, 5)
+        fixed_costs = FixedCosts.objects.filter(user=request.user).order_by('-date')
+        paginator = Paginator(fixed_costs, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'fixed/fixed_cost_view.html', {'pages': page, 'expenses': fixed_costs})
@@ -71,7 +78,7 @@ class ExpensePanelView(LoginRequiredMixin, View):
 class VariableCostView(LoginRequiredMixin, View):
     def get(self, request):
         variable_costs = VariableCosts.objects.filter(user=request.user)
-        paginator = Paginator(variable_costs, 5)
+        paginator = Paginator(variable_costs, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'variable/variable_cost_view.html', {'pages': page, 'expenses': variable_costs})
@@ -117,3 +124,27 @@ class EditVariableCostView(LoginRequiredMixin, UpdateView):
     template_name = 'variable/edit_variable_cost_view.html'
     success_url = reverse_lazy('variable_cost_view')
     fields = ('amount', 'date', 'description', 'category', 'source')
+
+
+class ExpenseComparisonChartView(View):
+    def get(self, request):
+        labels = []
+        for x in range(1, 13):
+            labels.append(calendar.month_name[x])
+        data = []
+        data2 = []
+        for month in range(1, 13):
+            queryset = FixedCosts.objects.filter(user=request.user, date__month=month).values('date__month'). \
+                annotate(s=Sum('amount')).order_by('date__month')
+            if not queryset:
+                data.append(0.0)
+            else:
+                data.append(queryset[0]['s'])
+
+            queryset2 = VariableCosts.objects.filter(user=request.user, date__month=month).values('date__month'). \
+                annotate(s=Sum('amount')).order_by('date__month')
+            if not queryset2:
+                data2.append(0.0)
+            else:
+                data2.append(queryset2[0]['s'])
+        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data, 'data2': data2})

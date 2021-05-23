@@ -1,17 +1,19 @@
 {% extends 'index.html' %}
 {% block chartinfo %}
-    <h2>Filter your incomes!</h2>
+<h2>Filter your incomes!</h2>
 <form method="POST">
 {% csrf_token %}
-<div class="form-group">
-    <label for="from_date">From:</label>
-        <input type="date" name="from_date" id="from_date" class="form-control form-control-sm" required>
+<div class="form-row">
+    <div class="form-group col-md-2 col-lg-2">
+        <label for="from_date" style="display: flex; justify-content: center">From:</label>
+            <input type="date" name="from_date" id="from_date" class="form-control form-control-sm" required>
+    </div>
+    <div class="form-group col-md-2 col-lg-2">
+        <label for="to_date" style="display: flex; justify-content: center">To:</label>
+            <input type="date" name="to_date" id="to_date" class="form-control form-control-sm" required>
+    </div>
 </div>
-<div class="form-group">
-    <label for="to_date">To:</label>
-        <input type="date" name="to_date" id="to_date" class="form-control form-control-sm" required>
-</div>
-    <button type="submit" class="btn btn-primary btn-primary-sm">Search</button>
+<button type="submit" class="btn btn-primary btn-primary-sm"><i class="fas fa-search"></i></button>
 </form>
 {% endblock %}
 {% block account %}
@@ -40,7 +42,7 @@ let myChart = new Chart(ctx, {
     options: {
         scales: {
             xAxes:[{
-                barPercentage: 0.25,
+                barPercentage: 0.2,
                 gridLines: {
                 display:false
         }
@@ -49,7 +51,7 @@ let myChart = new Chart(ctx, {
     }
 });
 for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
-    if (myChart.data.datasets[0].data[i] > 100) {
+    if (myChart.data.datasets[0].data[i] >= 100) {
         backgroundColors.push("#0080ff");
     } else {
         backgroundColors.push("red");
