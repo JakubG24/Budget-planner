@@ -132,6 +132,7 @@ class ExpenseComparisonChartView(View):
         for x in range(1, 13):
             labels.append(calendar.month_name[x])
         data = []
+        data2 = []
         for month in range(1, 13):
             queryset = FixedCosts.objects.filter(user=request.user, date__month=month).values('date__month'). \
                 annotate(s=Sum('amount')).order_by('date__month')
@@ -140,8 +141,10 @@ class ExpenseComparisonChartView(View):
             else:
                 data.append(queryset[0]['s'])
 
-        print(data)
-        queryset2 = VariableCosts.objects.filter(user=request.user).values('date__month'). \
-            annotate(s=Sum('amount')).order_by('date__month')
-
-        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data})
+            queryset2 = VariableCosts.objects.filter(user=request.user, date__month=month).values('date__month'). \
+                annotate(s=Sum('amount')).order_by('date__month')
+            if not queryset2:
+                data2.append(0.0)
+            else:
+                data2.append(queryset2[0]['s'])
+        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data, 'data2': data2})

@@ -41,7 +41,7 @@ let myChart = new Chart(ctx, {
         },
         {
             label: 'Variable costs',
-            data: [],
+            data: [{% for item in data2 %}'{{ item }}', {% endfor %}],
             backgroundColor: 'orange',
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
