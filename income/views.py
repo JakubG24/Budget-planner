@@ -68,12 +68,16 @@ class EditIncomeView(LoginRequiredMixin, UpdateView):
 class IncomeChartView(View):
     def get(self, request):
         labels = []
+        for x in range(1, 13):
+            labels.append(calendar.month_name[x])
         data = []
-        queryset = Income.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month').\
-            annotate(s=Sum('amount')).values('month', 's').order_by('month')
-        for income in queryset:
-            labels.append(calendar.month_name[income['month']])
-            data.append(income['s'])
+        for month in range(1, 13):
+            queryset = Income.objects.filter(user=request.user, date__month=month).values('date__month'). \
+                annotate(s=Sum('amount')).order_by('date__month')
+            if not queryset:
+                data.append(0.0)
+            else:
+                data.append(queryset[0]['s'])
         total_amount = f'Total income: {round(sum(data), 2)}'
         return render(request, 'income/charts/current_year_chart.html', {'labels': labels, 'data': data,
                                                                          'total': total_amount})
