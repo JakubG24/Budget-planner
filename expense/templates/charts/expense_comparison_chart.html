@@ -21,6 +21,7 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <canvas id="myChart" width="450" height="200"></canvas>
+{#    ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Septemper', 'October', 'November', 'December']#}
 <script>
 let fixedBackgroundColors = [];
 let variableBackgroundColors = [];
@@ -32,7 +33,7 @@ let myChart = new Chart(ctx, {
         datasets: [{
             label: 'Fixed costs',
             data: [{% for item in data %}'{{ item }}', {% endfor %}],
-            backgroundColor: fixedBackgroundColors,
+            backgroundColor: 'red',
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
             ],
@@ -40,8 +41,8 @@ let myChart = new Chart(ctx, {
         },
         {
             label: 'Variable costs',
-            data: [{% for item in data2 %}'{{ item }}', {% endfor %}],
-            backgroundColor: variableBackgroundColors,
+            data: [],
+            backgroundColor: 'orange',
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
             ],
@@ -52,20 +53,23 @@ let myChart = new Chart(ctx, {
             xAxes:[{
                 barPercentage: 0.2,
                 gridLines: {
-                display:false
+                display: false,
+                ticks: {
+                    beginAtZero: true,
+                }
         }
     }]
         }
     }
 });
 for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
-    if (myChart.data.datasets[0].data[i] > 0) {
+    if (myChart.data.datasets[0].data[i] === 0) {
         fixedBackgroundColors.push("red");
     }
 }
 
 for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
-    if (myChart.data.datasets[0].data[i] > 0) {
+    if (myChart.data.datasets[0].data[i] === 0) {
         variableBackgroundColors.push("orange");
     }
 }

@@ -1,3 +1,9 @@
+from datetime import datetime
+from itertools import chain
+from operator import attrgetter
+from xxlimited import Null
+
+import pandas as pd
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
@@ -15,8 +21,8 @@ from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource,
 
 class FixedCostView(LoginRequiredMixin, View):
     def get(self, request):
-        fixed_costs = FixedCosts.objects.filter(user=request.user)
-        paginator = Paginator(fixed_costs, 5)
+        fixed_costs = FixedCosts.objects.filter(user=request.user).order_by('-date')
+        paginator = Paginator(fixed_costs, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'fixed/fixed_cost_view.html', {'pages': page, 'expenses': fixed_costs})
@@ -72,7 +78,7 @@ class ExpensePanelView(LoginRequiredMixin, View):
 class VariableCostView(LoginRequiredMixin, View):
     def get(self, request):
         variable_costs = VariableCosts.objects.filter(user=request.user)
-        paginator = Paginator(variable_costs, 5)
+        paginator = Paginator(variable_costs, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
         return render(request, 'variable/variable_cost_view.html', {'pages': page, 'expenses': variable_costs})
@@ -123,23 +129,19 @@ class EditVariableCostView(LoginRequiredMixin, UpdateView):
 class ExpenseComparisonChartView(View):
     def get(self, request):
         labels = []
+        for x in range(1, 13):
+            labels.append(calendar.month_name[x])
         data = []
-        labels2 = []
-        data2 = []
-        queryset2 = VariableCosts.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month'). \
-            annotate(s=Sum('amount')).values('month', 's').order_by('month')
-        for expense in queryset2:
-            labels.append(calendar.month_name[expense['month']])
-            data2.append(expense['s'])
-        total_amount2 = round(sum(data2), 2)
-        queryset = FixedCosts.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month'). \
-            annotate(s=Sum('amount')).values('month', 's').order_by('month')
-        for expense in queryset:
-            labels.append(calendar.month_name[expense['month']])
-            data.append(expense['s'])
-        total_amount = round(sum(data), 2)
-        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data,
-                                                                        'total': total_amount+total_amount2, 'labels2': labels2,
-                                                                        'data2': data2})
+        for month in range(1, 13):
+            queryset = FixedCosts.objects.filter(user=request.user, date__month=month).values('date__month'). \
+                annotate(s=Sum('amount')).order_by('date__month')
+            if not queryset:
+                data.append(0.0)
+            else:
+                data.append(queryset[0]['s'])
 
+        print(data)
+        queryset2 = VariableCosts.objects.filter(user=request.user).values('date__month'). \
+            annotate(s=Sum('amount')).order_by('date__month')
 
+        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data})
