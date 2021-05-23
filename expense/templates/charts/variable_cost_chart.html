@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block chartinfo %}
-<h2>Filter your incomes!</h2>
+    <h2>Filter you variable costs!</h2>
 <form method="POST">
 {% csrf_token %}
 <div class="form-row">
@@ -13,52 +13,47 @@
             <input type="date" name="to_date" id="to_date" class="form-control form-control-sm" required>
     </div>
 </div>
-<button type="submit" class="btn btn-primary btn-primary-sm"><i class="fas fa-search"></i></button>
+    <button type="submit" class="btn btn-primary btn-primary-sm">Search</button>
 </form>
 {% endblock %}
 {% block account %}
-<div class="container">
-    <span style="display: flex; justify-content: center"><b>{{ total }}</b></span>
-</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<canvas id="myChart" width="450" height="200"></canvas>
+    <canvas id="myChart" width="400" height="200"></canvas>
 <script>
-let backgroundColors = [];
 let ctx = document.getElementById('myChart').getContext('2d');
 let myChart = new Chart(ctx, {
-    type: 'bar',
+    type: 'pie',
     data: {
         labels: [{% for label in labels %}'{{ label }}', {% endfor %}],
         datasets: [{
-            label: 'Income',
             data: [{% for item in data %}'{{ item }}', {% endfor %}],
-            backgroundColor: backgroundColors,
+            fill: false,
+            tension: 0.05,
+            backgroundColor: [
+                '#FF8C00',
+                '#7FFFD4',
+                '#0000FF',
+                '#7FFF00',
+                '#A9A9A9',
+                '#8B0000',
+                '#FFD700',
+                '#B0E0E6',
+            ],
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
             ],
+
             borderWidth: 1
         }]
     },
     options: {
         scales: {
-            xAxes:[{
-                barPercentage: 0.2,
-                gridLines: {
-                display: false,
-                ticks: {
-                    beginAtZero: true,
-                }
-        }
-    }]
+            y: {
+                beginAtZero: true
+            }
         }
     }
 });
-for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
-    if (myChart.data.datasets[0].data[i] >= 0) {
-        backgroundColors.push("#0080ff");
-    }
-}
 
-myChart.update();
 </script>
 {% endblock %}
