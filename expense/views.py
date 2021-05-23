@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.db.models.functions import ExtractMonth
+import calendar
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -117,3 +118,28 @@ class EditVariableCostView(LoginRequiredMixin, UpdateView):
     template_name = 'variable/edit_variable_cost_view.html'
     success_url = reverse_lazy('variable_cost_view')
     fields = ('amount', 'date', 'description', 'category', 'source')
+
+
+class ExpenseComparisonChartView(View):
+    def get(self, request):
+        labels = []
+        data = []
+        labels2 = []
+        data2 = []
+        queryset2 = VariableCosts.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month'). \
+            annotate(s=Sum('amount')).values('month', 's').order_by('month')
+        for expense in queryset2:
+            labels.append(calendar.month_name[expense['month']])
+            data2.append(expense['s'])
+        total_amount2 = round(sum(data2), 2)
+        queryset = FixedCosts.objects.filter(user=request.user).annotate(month=ExtractMonth('date')).values('month'). \
+            annotate(s=Sum('amount')).values('month', 's').order_by('month')
+        for expense in queryset:
+            labels.append(calendar.month_name[expense['month']])
+            data.append(expense['s'])
+        total_amount = round(sum(data), 2)
+        return render(request, 'charts/expense_comparison_chart.html', {'labels': labels, 'data': data,
+                                                                        'total': total_amount+total_amount2, 'labels2': labels2,
+                                                                        'data2': data2})
+
+

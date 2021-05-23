@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+{% block chartinfo %}
+<div style="display: flex; justify-content: center"><h2>Expenses comparison</h2></div>
+<div class="row-cols-2">
+    <div class="form-group col-md-4 col-lg-4">
+        <label for=""><b style="font-size: 20px">Fixed costs</b></label>
+            <a href="#"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
+    </div>
+    <div class="form-group col-md-4 col-lg-4">
+        <label for=""><b style="font-size: 20px">Variable costs</b></label>
+            <a href="#"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block account %}
+<div class="container">
+    <span style="display: flex; justify-content: center"><b>Total: {{ total }}</b></span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<canvas id="myChart" width="450" height="200"></canvas>
+<script>
+let fixedBackgroundColors = [];
+let variableBackgroundColors = [];
+let ctx = document.getElementById('myChart').getContext('2d');
+let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for label in labels %}'{{ label }}', {% endfor %}],
+        datasets: [{
+            label: 'Fixed costs',
+            data: [{% for item in data %}'{{ item }}', {% endfor %}],
+            backgroundColor: fixedBackgroundColors,
+            borderColor: [
+                'rgba(0, 0, 0, 0.3)'
+            ],
+            borderWidth: 1
+        },
+        {
+            label: 'Variable costs',
+            data: [{% for item in data2 %}'{{ item }}', {% endfor %}],
+            backgroundColor: variableBackgroundColors,
+            borderColor: [
+                'rgba(0, 0, 0, 0.3)'
+            ],
+        }]
+    },
+    options: {
+        scales: {
+            xAxes:[{
+                barPercentage: 0.2,
+                gridLines: {
+                display:false
+        }
+    }]
+        }
+    }
+});
+for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
+    if (myChart.data.datasets[0].data[i] > 0) {
+        fixedBackgroundColors.push("red");
+    }
+}
+
+for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
+    if (myChart.data.datasets[0].data[i] > 0) {
+        variableBackgroundColors.push("orange");
+    }
+}
+
+myChart.update();
+</script>
+{% endblock %}
