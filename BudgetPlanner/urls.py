@@ -28,4 +28,5 @@ urlpatterns = [
     path('income/my_income/edit/<int:pk>/', views.EditIncomeView.as_view(), name='edit_income'),
     path('income/create_category/', views.CreateCategoryView.as_view(), name='income_category'),
     path('summary/income_charts/', views.IncomeChartView.as_view(), name='income_charts'),
+    path('summary/total/', views.TotalSummaryView.as_view(), name='total_summary_chart'),
 ]

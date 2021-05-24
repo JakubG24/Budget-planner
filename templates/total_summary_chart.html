@@ -1,0 +1,86 @@
+{% extends 'index.html' %}
+{% block chartinfo %}
+<div style="display: flex; justify-content: center"><h2>Income vs. Expenses</h2></div>
+    <h2>Sort by date:</h2>
+<form method="POST">
+{% csrf_token %}
+<div class="form-row">
+    <div class="form-group col-md-2 col-lg-2">
+        <label for="from_date" style="display: flex; justify-content: center">From:</label>
+            <input type="date" name="from_date" id="from_date" class="form-control form-control-sm" required>
+    </div>
+    <div class="form-group col-md-2 col-lg-2">
+        <label for="to_date" style="display: flex; justify-content: center">To:</label>
+            <input type="date" name="to_date" id="to_date" class="form-control form-control-sm" required>
+    </div>
+</div>
+    <button type="submit" class="btn btn-primary btn-primary-sm">Search</button>
+</form>
+{% endblock %}
+{% block account %}
+<div class="container">
+    <span style="display: flex; justify-content: center"><b>Year {{ year }}</b></span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<div style="height: 50%">
+    <canvas id="myChart" width="450" height="200"></canvas>
+</div>
+<script>
+let fixedBackgroundColors = [];
+let variableBackgroundColors = [];
+window.onload = function(){
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for label in labels %}'{{ label }}', {% endfor %}],
+            datasets: [{
+                label: 'Income {{ total_inc }}',
+                data: [{% for item in income %}'{{ item }}', {% endfor %}],
+                backgroundColor: 'green',
+                borderColor: [
+                    'rgba(0, 0, 0, 0.3)'
+                ],
+                borderWidth: 1
+            },
+            {
+                label: 'Expenses {{ total_exp }}',
+                data: [{% for item in expense %}'{{ item }}', {% endfor %}],
+                backgroundColor: 'red',
+                borderColor: [
+                    'rgba(0, 0, 0, 0.3)'
+                ],
+            }]
+        },
+        options: {
+            scales: {
+                xAxes:[{
+                    barPercentage: 1,
+                    gridLines: {
+                    display: false,
+                    ticks: {
+                        beginAtZero: true,
+                    }
+            }
+        }]
+            },
+        }
+    });
+    for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
+        if (myChart.data.datasets[0].data[i] === 0) {
+            fixedBackgroundColors.push("red");
+        }
+    }
+
+    for (i = 0; i < myChart.data.datasets[0].data.length; i++) {
+        if (myChart.data.datasets[0].data[i] === 0) {
+            variableBackgroundColors.push("orange");
+        }
+    }
+
+    myChart.update();
+}
+</script>
+
+
+{% endblock %}
