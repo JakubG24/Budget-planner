@@ -11,9 +11,6 @@
             <a href="{% url 'variable_cost_chart' %}"><i class="fas fa-external-link-square-alt" style="font-size: 30px"></i></a>
     </div>
 </div>
-
-
-
 {% endblock %}
 {% block account %}
 <div class="container">
@@ -32,7 +29,7 @@ let myChart = new Chart(ctx, {
         datasets: [{
             label: 'Fixed costs',
             data: [{% for item in data %}'{{ item }}', {% endfor %}],
-            backgroundColor: 'red',
+            backgroundColor: 'blue',
             borderColor: [
                 'rgba(0, 0, 0, 0.3)'
             ],
@@ -50,7 +47,7 @@ let myChart = new Chart(ctx, {
     options: {
         scales: {
             xAxes:[{
-                barPercentage: 0.2,
+                barPercentage: 1,
                 gridLines: {
                 display: false,
                 ticks: {

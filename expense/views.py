@@ -149,7 +149,7 @@ class ExpenseComparisonChartView(LoginRequiredMixin, View):
                 data2.append(queryset2[0]['s'])
         total = round(sum(data) + sum(data2), 2)
         return render(request, 'charts/expense_comparative_chart.html', {'total': total, 'labels': labels, 'data': data,
-                                                                        'data2': data2})
+                                                                         'data2': data2})
 
 
 class FixedCostsChartView(LoginRequiredMixin, View):
