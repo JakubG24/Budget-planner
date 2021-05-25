@@ -89,7 +89,7 @@ class IncomeChartView(LoginRequiredMixin, View):
         from_date = request.POST['from_date']
         labels = []
         data = []
-        queryset = Income.objects.filter(user=request.user, date__gte=from_date, date__lte=to_date)\
+        queryset = Income.objects.filter(user=request.user, date__gte=from_date, date__lte=to_date) \
             .values('category__name').annotate(category_amount=Sum('amount')).order_by('-category_amount')
         for income in queryset:
             labels.append(income['category__name'])
@@ -157,4 +157,4 @@ class TotalSummaryView(LoginRequiredMixin, View):
         income_sum = round(sum(income_data), 2)
         expense_sum = round(sum(expense_data), 2)
         return render(request, 'summary_pie_chart.html', {'income': income_data, 'expense': expense_data,
-                                                            'total_inc': income_sum, 'total_exp': expense_sum})
+                                                          'total_inc': income_sum, 'total_exp': expense_sum})
