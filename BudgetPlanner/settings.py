@@ -84,7 +84,8 @@ DATABASES = {
         'NAME': 'Budget',
         'USER': 'postgres',
         'PASSWORD': 'coderslab',
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+
     }
 }
 
