@@ -12,6 +12,7 @@ def user():
     u.save()
     return u
 
+
 @pytest.fixture
 def fixed_cost_category(user):
     result = FixedCostSourceCategory.objects.create(name='blee', user=user)

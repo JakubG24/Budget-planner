@@ -17,6 +17,7 @@
                 Fixed costs</a></li>
             <li style="display: inline-block"><a href="{% url 'variable_cost_view' %}" class="btn btn-primary">
                 Variable costs</a></li>
+            <li style="display: flex"><a href="#variable_costs">Jump to variable cost categories</a></li>
         </ul>
     </div>
 
@@ -27,85 +28,70 @@
 
 <div class="app-table">
 
-  <table class="table table-stripped table-hover">
+  <table class="table table-stripped table-hover" id="fixed_costs_table">
     <thead>
       <tr>
-        <th>kolumna1</th>
-        <th>kolumna2</th>
-        <th>kolumna3</th>
-        <th></th>
-        <th></th>
+        <th style="text-align: center">Fixed cost categories</th>
+        <th><a href="{% url 'create_category_fixed' %}" class="btn btn-secondary btn-sm">Add new category</a></th>
         <th></th>
       </tr>
+          <tr>
+            <th>Category name</th>
+            <th>Options</th>
+            <th>Add source</th>
+          </tr>
     </thead>
 
     <tbody>
-      {% for expense in pages %}
+    {% for item in fixed %}
       <tr>
-        <td>{{expense.amount}}</td>
-        <td>{{expense.category}}</td>
-        <td>{{expense.source}}</td>
-        <td>{{expense.description}}</td>
-        <td>{{expense.date}}</td>
-          <form method="POST"
-                onsubmit="return confirm(`Do you want to delete expense {{ expense.description }}: {{ expense.amount }}?`)">
-              {% csrf_token %}
+        <td><a href="{{ item.get_absolute_url }}">{{ item }}</a></td>
         <td>
-          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
-          <input type="hidden" value="{{ expense.id }}" name="expense_id">
-          <button class="btn btn-secondary btn-sm">Delete</button>
+            <form method="POST" id="formA"
+                onsubmit="return confirm(`Do you want to delete category {{ item }}?`)">
+              {% csrf_token %}
+            <a href="{{ item.get_edit_url }}" class="btn btn-secondary btn-sm">Edit</a>
+            <input type="hidden" value="{{ item.id }}" name="fixed_category_id">
+            <button class="btn btn-secondary btn-sm">Delete</button>
+            </form>
         </td>
-          </form>
-      {% empty %}
-      <td><p class="no-results">No results </p></td>
+        <td><a href="{{ item.get_add_url }}"><i class="fas fa-plus"></i></a></td>
+    {% endfor %}
       </tr>
-      {% endfor %}
     </tbody>
   </table>
-</div>
+<table class="table table-stripped table-hover" id="variable_costs">
+    <thead>
+      <tr>
+        <th style="text-align: center">Variable cost categories</th>
+        <th><a href="{% url 'create_category_variable' %}" class="btn btn-secondary btn-sm">Add new category</a></th>
+        <th></th>
+      </tr>
+          <tr>
+            <th>Category name</th>
+            <th>Options</th>
+            <th>Add source</th>
+          </tr>
+    </thead>
 
-
-
-<div class="pagination-container">
-    <ul class="pagination">
-        {% if pages.has_previous %}
-            <li>
-                <a href="?page={{ pages.previous_page_number }}"><i class="fa fa-chevron-left"
-                                                              aria-hidden="true"></i>&nbsp previous &nbsp</a>
-            </li>
-        {% else %}
-            <li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
-        {% endif %}
-        {% if pages.number|add:'-4' > 1 %}
-            <li>
-                <a href="?page={{ pages.number|add:'-5' }}"> &hellip;</a>
-            </li>
-        {% endif %}
-        {% for i in pages.paginator.page_range %}
-            {% if pages.number == i %}
-                <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only">(current)</span></span></li>
-            {% elif i > pages.number|add:'-5' and i < pages.number|add:'5' %}
-        <li>
-            <a href="?page={{ i }}">&nbsp{{ i }}&nbsp</a>
-        </li>
-            {% endif %}
-        {% endfor %}
-
-        {% if pages.paginator.num_pages > pages.number|add:'4' %}
-        <li>
-            <a href="?page={{ pages.number|add:'5' }}"> &hellip;</a>
-        </li>
-        {% endif %}
-
-        {% if pages.has_next %}
-            <li>
-                <a href="?page={{ pages.next_page_number }}">&nbsp next &nbsp<i class="fa fa-chevron-right"
-                          aria-hidden="true"></i></a>
-            </li>
-        {% else %}
-            <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
-        {% endif %}
-    </ul>
+    <tbody>
+    {% for item in variable %}
+      <tr>
+        <td><a href="{{ item.get_absolute_url }}">{{ item }}</a></td>
+        <td>
+        <form method="POST" id="formB"
+                onsubmit="return confirm(`Do you want to delete category {{ item }}?`)">
+              {% csrf_token %}
+            <a href="{{ item.get_edit_url }}" class="btn btn-secondary btn-sm">Edit</a>
+            <input type="hidden" value="{{ item.id }}" name="variable_category_id">
+            <button class="btn btn-secondary btn-sm">Delete</button>
+        </form>
+        </td>
+        <td><a href="{{ item.get_add_url }}"><i class="fas fa-plus"></i></a></td>
+    {% endfor %}
+      </tr>
+    </tbody>
+  </table>
 </div>
 </div>
 </div>

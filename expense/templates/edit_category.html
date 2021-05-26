@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block account %}
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'expense_panel' %}">My expenses</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Edit category</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="">Category name</label>
+          <input type="text" class="form-control form-control-sm" name="name"
+                 value="{{ obj }}" required/>
+        </div>
+        <button type="submit" class="btn btn-primary btn-primary-sm">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

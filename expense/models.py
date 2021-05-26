@@ -10,6 +10,15 @@ class FixedCostSourceCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f'/expense/fixed_cost_category/{self.id}/'
+
+    def get_edit_url(self):
+        return f'/expense/fixed_cost_category/edit/{self.id}/'
+
+    def get_add_url(self):
+        return f'/expense/fixed_cost_category/{self.id}/add_source/'
+
 
 class FixedCostSource(models.Model):
     name = models.CharField(max_length=64)
@@ -18,6 +27,9 @@ class FixedCostSource(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_edit_url(self):
+        return f'/expense/fixed_cost_source/edit/{self.id}/'
 
 
 class FixedCosts(models.Model):
@@ -42,6 +54,15 @@ class VariableCostSourceCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f'/expense/variable_cost_category/{self.id}/'
+
+    def get_edit_url(self):
+        return f'/expense/variable_cost_category/edit/{self.id}/'
+
+    def get_add_url(self):
+        return f'/expense/variable_cost_category/{self.id}/add_source/'
+
 
 class VariableCostSource(models.Model):
     name = models.CharField(max_length=64)
@@ -50,6 +71,9 @@ class VariableCostSource(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_edit_url(self):
+        return f'/expense/variable_cost_source/edit/{self.id}/'
 
 
 class VariableCosts(models.Model):

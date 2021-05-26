@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+{% block account %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <span><a href="{% url 'expense_panel' %}">My Expenses</a></span>
+          </li>
+            <li class="breadcrumb-item">
+            <span>Variable cost categories</span>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">{{ obj }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container">
+<div class="app-table">
+
+  <table class="table table-stripped table-hover">
+    <thead>
+      <tr>
+        <th>Source name</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for item in sources %}
+      <tr>
+        <td>{{ item }}</td>
+        <td>
+        <form method="POST"
+                onsubmit="return confirm(`Do you want to delete source {{ item }}?`)">
+              {% csrf_token %}
+            <a href="/expense/variable_cost_source/edit/{{ item.id }}/" class="btn btn-secondary btn-sm">Edit</a>
+            <input type="hidden" value="{{ item.id }}" name="source_id">
+            <button class="btn btn-secondary btn-sm">Delete</button>
+            </form>
+        </td>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+{% endblock %}
