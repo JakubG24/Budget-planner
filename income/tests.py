@@ -1,9 +1,9 @@
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
-from income.models import Income, IncomeSourceCategory, IncomeSource
+from income.models import Income
 
 
 @pytest.mark.django_db
