@@ -43,7 +43,7 @@ def test_add_income_post(category_source):
     c.force_login(category_source.user)
     incomes_before = Income.objects.count()
     response = c.post(reverse('add_income'), {'amount': 500, 'date': '2021-05-05', 'description': 'test',
-                                              'category': category_source.sources.first().id,
+                                              'category': category_source.categories.first().id,
                                               'source': [category_source.id]})
     assert response.status_code == 302
     assert Income.objects.count() == incomes_before + 1
@@ -54,7 +54,7 @@ def test_modify_income(category_source):
     c = Client()
     c.force_login(category_source.user)
     c.post(reverse('add_income'), {'amount': 500, 'date': '2021-05-05', 'description': 'test',
-                                   'category': category_source.sources.first().id,
+                                   'category': category_source.categories.first().id,
                                    'source': [category_source.id]})
     income = Income.objects.first()
     assert income.amount == 500.0
@@ -70,7 +70,7 @@ def test_delete_income(category_source):
     c = Client()
     c.force_login(category_source.user)
     c.post(reverse('add_income'), {'amount': 500, 'date': '2021-05-05', 'description': 'test',
-                                   'category': category_source.sources.first().id,
+                                   'category': category_source.categories.first().id,
                                    'source': [category_source.id]})
 
     assert Income.objects.count() == 1
