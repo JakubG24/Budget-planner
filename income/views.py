@@ -44,7 +44,7 @@ class CreateCategoryView(LoginRequiredMixin, View):
         category = IncomeSourceCategory.objects.create(name=category_name, user=request.user)
         for elem in array:
             ic = IncomeSource.objects.create(name=elem, user=request.user)
-        ic.sources.add(category)
+        ic.categories.add(category)
         return redirect(reverse_lazy('income_panel'))
 
 

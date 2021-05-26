@@ -14,7 +14,7 @@ class IncomeSourceCategory(models.Model):
 class IncomeSource(models.Model):
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=CASCADE)
-    sources = models.ManyToManyField(IncomeSourceCategory)
+    categories = models.ManyToManyField(IncomeSourceCategory)
 
     def __str__(self):
         return self.name

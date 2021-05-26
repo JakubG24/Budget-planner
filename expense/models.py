@@ -23,7 +23,7 @@ class FixedCostSourceCategory(models.Model):
 class FixedCostSource(models.Model):
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=CASCADE)
-    source = models.ForeignKey(FixedCostSourceCategory, on_delete=CASCADE, null=True)
+    category = models.ForeignKey(FixedCostSourceCategory, on_delete=CASCADE, null=True)
 
     def __str__(self):
         return self.name
@@ -67,7 +67,7 @@ class VariableCostSourceCategory(models.Model):
 class VariableCostSource(models.Model):
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=CASCADE, null=True)
-    source = models.ForeignKey(VariableCostSourceCategory, on_delete=CASCADE, null=True)
+    category = models.ForeignKey(VariableCostSourceCategory, on_delete=CASCADE, null=True)
 
     def __str__(self):
         return self.name
