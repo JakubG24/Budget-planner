@@ -71,17 +71,19 @@ class ExpensePanelView(LoginRequiredMixin, View):
                                                       'variable': variable_cost_categories})
 
     def post(self, request):
-        fixed_category_id = request.POST['fixed_category_id']
-        FixedCostSourceCategory.objects.get(pk=fixed_category_id).delete()
-        # variable_category_id = request.POST['variable_category_id']
-        # VariableCostSourceCategory.objects.get(pk=variable_category_id).delete()
+        if 'fixed_category_id' in request.POST:
+            fixed_category_id = request.POST['fixed_category_id']
+            FixedCostSourceCategory.objects.get(pk=fixed_category_id).delete()
+        elif 'variable_category_id' in request.POST:
+            variable_category_id = request.POST['variable_category_id']
+            VariableCostSourceCategory.objects.get(pk=variable_category_id).delete()
         return redirect(reverse_lazy('expense_panel'))
 
 
 class FixedCostCategoryEdit(LoginRequiredMixin, View):
     def get(self, request, id):
         obj = FixedCostSourceCategory.objects.get(pk=id)
-        return render(request, 'fixed/edit_category.html', {'obj': obj})
+        return render(request, 'edit_category.html', {'obj': obj})
 
     def post(self, request, id):
         obj = FixedCostSourceCategory.objects.get(pk=id)
@@ -91,10 +93,23 @@ class FixedCostCategoryEdit(LoginRequiredMixin, View):
         return redirect(reverse_lazy('expense_panel'))
 
 
-class AddSourceView(LoginRequiredMixin, View):
+class VariableCostCategoryEdit(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = VariableCostSourceCategory.objects.get(pk=id)
+        return render(request, 'edit_category.html', {'obj': obj})
+
+    def post(self, request, id):
+        obj = VariableCostSourceCategory.objects.get(pk=id)
+        name = request.POST['name']
+        obj.name = name
+        obj.save()
+        return redirect(reverse_lazy('expense_panel'))
+
+
+class AddFixedSourceView(LoginRequiredMixin, View):
     def get(self, request, id):
         obj = FixedCostSourceCategory.objects.get(pk=id)
-        return render(request, 'fixed/add_source.html', {'obj': obj})
+        return render(request, 'add_source.html', {'obj': obj})
 
     def post(self, request, id):
         obj = FixedCostSourceCategory.objects.get(pk=id)
@@ -103,10 +118,22 @@ class AddSourceView(LoginRequiredMixin, View):
         return redirect(f'/expense/fixed_cost_category/{id}/')
 
 
+class AddVariableSourceView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = VariableCostSourceCategory.objects.get(pk=id)
+        return render(request, 'add_source.html', {'obj': obj})
+
+    def post(self, request, id):
+        obj = VariableCostSourceCategory.objects.get(pk=id)
+        name = request.POST['name']
+        VariableCostSource.objects.create(name=name, user=request.user, source=obj)
+        return redirect(f'/expense/variable_cost_category/{id}/')
+
+
 class FixedCostSourceEdit(LoginRequiredMixin, View):
     def get(self, request, id):
         obj = FixedCostSource.objects.get(pk=id)
-        return render(request, 'fixed/edit_source.html', {'obj': obj})
+        return render(request, 'edit_source.html', {'obj': obj})
 
     def post(self, request, id):
         name = request.POST['name']
@@ -115,6 +142,20 @@ class FixedCostSourceEdit(LoginRequiredMixin, View):
         obj.name = name
         obj.save()
         return redirect(f'/expense/fixed_cost_category/{category_id}/')
+
+
+class VariableCostSourceEdit(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = VariableCostSource.objects.get(pk=id)
+        return render(request, 'edit_source.html', {'obj': obj})
+
+    def post(self, request, id):
+        name = request.POST['name']
+        obj = VariableCostSource.objects.get(pk=id)
+        category_id = obj.source.id
+        obj.name = name
+        obj.save()
+        return redirect(f'/expense/variable_cost_category/{category_id}/')
 
 
 class FixedCostCategoryDetails(LoginRequiredMixin, View):
@@ -129,9 +170,21 @@ class FixedCostCategoryDetails(LoginRequiredMixin, View):
         return redirect(f'/expense/fixed_cost_category/{id}/')
 
 
+class VariableCostCategoryDetails(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = VariableCostSourceCategory.objects.get(pk=id)
+        sources = VariableCostSource.objects.filter(user=self.request.user, source_id=id)
+        return render(request, 'variable/category_details.html', {'sources': sources, 'obj': obj})
+
+    def post(self, request, id):
+        source_id = request.POST['source_id']
+        VariableCostSource.objects.get(pk=source_id).delete()
+        return redirect(f'/expense/variable_cost_category/{id}/')
+
+
 class VariableCostView(LoginRequiredMixin, View):
     def get(self, request):
-        variable_costs = VariableCosts.objects.filter(user=request.user)
+        variable_costs = VariableCosts.objects.filter(user=request.user).order_by('-date')
         paginator = Paginator(variable_costs, 12)
         page_number = request.GET.get('page')
         page = Paginator.get_page(paginator, page_number)
