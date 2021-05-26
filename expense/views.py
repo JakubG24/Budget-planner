@@ -3,9 +3,9 @@ from django.core.paginator import Paginator
 from django.db.models import Sum
 import calendar
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
 from expense.forms import FixedCostForm, VariableCostForm
 from expense.models import FixedCosts, FixedCostSourceCategory, FixedCostSource, VariableCosts, VariableCostSource, \
@@ -60,12 +60,73 @@ class CreateCategoryView(LoginRequiredMixin, View):
         category = FixedCostSourceCategory.objects.create(name=category_name, user=request.user)
         for elem in array:
             FixedCostSource.objects.create(name=elem, user=request.user, source=category)
-        return redirect(reverse_lazy('fixed_cost_view'))
+        return redirect(reverse_lazy('expense_panel'))
 
 
 class ExpensePanelView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'expense_panel.html')
+        fixed_cost_categories = FixedCostSourceCategory.objects.filter(user=request.user)
+        variable_cost_categories = VariableCostSourceCategory.objects.filter(user=request.user)
+        return render(request, 'expense_panel.html', {'fixed': fixed_cost_categories,
+                                                      'variable': variable_cost_categories})
+
+    def post(self, request):
+        fixed_category_id = request.POST['fixed_category_id']
+        FixedCostSourceCategory.objects.get(pk=fixed_category_id).delete()
+        # variable_category_id = request.POST['variable_category_id']
+        # VariableCostSourceCategory.objects.get(pk=variable_category_id).delete()
+        return redirect(reverse_lazy('expense_panel'))
+
+
+class FixedCostCategoryEdit(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = FixedCostSourceCategory.objects.get(pk=id)
+        return render(request, 'fixed/edit_category.html', {'obj': obj})
+
+    def post(self, request, id):
+        obj = FixedCostSourceCategory.objects.get(pk=id)
+        name = request.POST['name']
+        obj.name = name
+        obj.save()
+        return redirect(reverse_lazy('expense_panel'))
+
+
+class AddSourceView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = FixedCostSourceCategory.objects.get(pk=id)
+        return render(request, 'fixed/add_source.html', {'obj': obj})
+
+    def post(self, request, id):
+        obj = FixedCostSourceCategory.objects.get(pk=id)
+        name = request.POST['name']
+        FixedCostSource.objects.create(name=name, user=request.user, source=obj)
+        return redirect(f'/expense/fixed_cost_category/{id}/')
+
+
+class FixedCostSourceEdit(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = FixedCostSource.objects.get(pk=id)
+        return render(request, 'fixed/edit_source.html', {'obj': obj})
+
+    def post(self, request, id):
+        name = request.POST['name']
+        obj = FixedCostSource.objects.get(pk=id)
+        category_id = obj.source.id
+        obj.name = name
+        obj.save()
+        return redirect(f'/expense/fixed_cost_category/{category_id}/')
+
+
+class FixedCostCategoryDetails(LoginRequiredMixin, View):
+    def get(self, request, id):
+        obj = FixedCostSourceCategory.objects.get(pk=id)
+        sources = FixedCostSource.objects.filter(user=self.request.user, source_id=id)
+        return render(request, 'fixed/category_details.html', {'sources': sources, 'obj': obj})
+
+    def post(self, request, id):
+        source_id = request.POST['source_id']
+        FixedCostSource.objects.get(pk=source_id).delete()
+        return redirect(f'/expense/fixed_cost_category/{id}/')
 
 
 class VariableCostView(LoginRequiredMixin, View):
@@ -109,7 +170,7 @@ class CreateCategoryVariableView(LoginRequiredMixin, View):
         category = VariableCostSourceCategory.objects.create(name=category_name, user=request.user)
         for elem in array:
             VariableCostSource.objects.create(name=elem, user=request.user, source=category)
-        return redirect(reverse_lazy('variable_cost_view'))
+        return redirect(reverse_lazy('expense_panel'))
 
 
 class EditVariableCostView(LoginRequiredMixin, UpdateView):
@@ -177,3 +238,19 @@ class VariableCostsChartView(LoginRequiredMixin, View):
             labels.append(expense['category__name'])
             data.append(expense['category_amount'])
         return render(request, 'charts/variable_cost_chart.html', {'labels': labels, 'data': data})
+
+
+# class FixedCostCategoriesList(LoginRequiredMixin, ListView):
+#     model = FixedCostSourceCategory
+#     template_name = 'fixed/fixed_categories_list.html'
+#
+#     def get_queryset(self):
+#         return FixedCostSourceCategory.objects.filter(user=self.request.user)
+#
+#
+# class VariableCostCategoriesList(LoginRequiredMixin, ListView):
+#     model = VariableCostSourceCategory
+#     template_name = 'variable/variable_categories_list.html'
+#
+#     def get_queryset(self):
+#         return VariableCostSourceCategory.objects.filter(user=self.request.user)

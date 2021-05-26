@@ -5,6 +5,10 @@ from expense import views
 urlpatterns = [
     path('', views.ExpensePanelView.as_view(), name='expense_panel'),
     path('fixed_costs/', views.FixedCostView.as_view(), name='fixed_cost_view'),
+    path('fixed_cost_category/<int:id>/add_source/', views.AddSourceView.as_view(), name='fixed_add_source'),
+    path('fixed_cost_category/edit/<int:id>/', views.FixedCostCategoryEdit.as_view(), name='fixed_category_edit'),
+    path('fixed_cost_source/edit/<int:id>/', views.FixedCostSourceEdit.as_view(), name='fixed_source_edit'),
+    path('fixed_cost_category/<int:id>/', views.FixedCostCategoryDetails.as_view(), name='fixed_category_details'),
     path('add_expense/fixed/', views.AddFixedCostView.as_view(), name='add_fixed'),
     path('add_expense/variable/', views.VariableCostAddView.as_view(), name='add_variable'),
     path('create_category/fixed/', views.CreateCategoryView.as_view(), name='create_category_fixed'),

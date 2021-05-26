@@ -30,41 +30,60 @@
   <table class="table table-stripped table-hover">
     <thead>
       <tr>
-        <th>kolumna1</th>
-        <th>kolumna2</th>
-        <th>kolumna3</th>
-        <th></th>
-        <th></th>
+        <th style="text-align: center">Fixed cost categories</th>
+        <th><a href="{% url 'create_category_fixed' %}" class="btn btn-secondary btn-sm">Add new category</a></th>
         <th></th>
       </tr>
+          <tr>
+            <th>Category name</th>
+            <th>Options</th>
+            <th>Add source</th>
+          </tr>
     </thead>
 
     <tbody>
-      {% for expense in pages %}
+    {% for item in fixed %}
       <tr>
-        <td>{{expense.amount}}</td>
-        <td>{{expense.category}}</td>
-        <td>{{expense.source}}</td>
-        <td>{{expense.description}}</td>
-        <td>{{expense.date}}</td>
-          <form method="POST"
-                onsubmit="return confirm(`Do you want to delete expense {{ expense.description }}: {{ expense.amount }}?`)">
-              {% csrf_token %}
+        <td><a href="{{ item.get_absolute_url }}">{{ item }}</a></td>
         <td>
-          <a href="#" class="btn btn-secondary btn-sm">Edit</a>
-          <input type="hidden" value="{{ expense.id }}" name="expense_id">
-          <button class="btn btn-secondary btn-sm">Delete</button>
+            <form method="POST"
+                onsubmit="return confirm(`Do you want to delete category {{ item }}?`)">
+              {% csrf_token %}
+            <a href="{{ item.get_edit_url }}" class="btn btn-secondary btn-sm">Edit</a>
+            <input type="hidden" value="{{ item.id }}" name="fixed_category_id">
+            <button class="btn btn-secondary btn-sm">Delete</button>
+            </form>
         </td>
-          </form>
-      {% empty %}
-      <td><p class="no-results">No results </p></td>
+        <td><a href="{{ item.get_add_url }}"><i class="fas fa-plus"></i></a></td>
+    {% endfor %}
       </tr>
-      {% endfor %}
+    </tbody>
+  </table>
+<table class="table table-stripped table-hover">
+    <thead>
+      <tr>
+        <th style="text-align: center">Variable cost categories</th>
+        <th><a href="{% url 'create_category_variable' %}" class="btn btn-secondary btn-sm">Add new category</a></th>
+        <th></th>
+      </tr>
+          <tr>
+            <th>Category name</th>
+            <th>Options</th>
+            <th>Add source</th>
+          </tr>
+    </thead>
+
+    <tbody>
+    {% for item in variable %}
+      <tr>
+        <td>{{ item }}</td>
+        <td>del/edit</td>
+        <td>+</td>
+    {% endfor %}
+      </tr>
     </tbody>
   </table>
 </div>
-
-
 
 <div class="pagination-container">
     <ul class="pagination">
