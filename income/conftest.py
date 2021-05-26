@@ -22,5 +22,5 @@ def category(user):
 @pytest.fixture
 def category_source(category):
     cs = IncomeSource.objects.create(name='blee', user=category.user)
-    cs.sources.add(category)
+    cs.categories.add(category)
     return cs

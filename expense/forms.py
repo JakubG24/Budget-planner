@@ -23,7 +23,7 @@ class FixedCostForm(forms.ModelForm):
         if 'category' in self.data:
             try:
                 category_id = int(self.data.get('category'))
-                self.fields['source'].queryset = FixedCostSource.objects.filter(source_id=category_id).order_by('name')
+                self.fields['source'].queryset = FixedCostSource.objects.filter(category_id=category_id).order_by('name')
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk:
@@ -47,7 +47,7 @@ class VariableCostForm(forms.ModelForm):
         if 'category' in self.data:
             try:
                 category_id = int(self.data.get('category'))
-                self.fields['source'].queryset = VariableCostSource.objects.filter(source_id=category_id).order_by('name')
+                self.fields['source'].queryset = VariableCostSource.objects.filter(category_id=category_id).order_by('name')
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk:

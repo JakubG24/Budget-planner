@@ -21,7 +21,7 @@ def fixed_cost_category(user):
 
 @pytest.fixture
 def fixed_cost_category_source(fixed_cost_category):
-    result = FixedCostSource.objects.create(name='bleeh', user=fixed_cost_category.user, source=fixed_cost_category)
+    result = FixedCostSource.objects.create(name='bleeh', user=fixed_cost_category.user, category=fixed_cost_category)
     return result
 
 
@@ -34,5 +34,5 @@ def variable_cost_category(user):
 @pytest.fixture
 def variable_cost_category_source(variable_cost_category):
     result = VariableCostSource.objects.create(name='bleeh', user=variable_cost_category.user,
-                                               source=variable_cost_category)
+                                               category=variable_cost_category)
     return result
