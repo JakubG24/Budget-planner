@@ -15,7 +15,7 @@
 
   <div class="card">
     <div class="card-body">
-      <form method="POST" id="fixedForm" data-sources-url="{% url 'ajax_load_sources' %}" novalidate>
+      <form method="POST" id="fixedForm" data-sources-url="{% url 'load_sources_fixed' %}" novalidate>
         {% csrf_token %}
         {% for field in form.visible_fields %}
         <div class="form-group">
@@ -35,8 +35,8 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
     $("#id_category").change(function () {
-      var url = $("#fixedForm").attr("data-sources-url");
-      var categoryId = $(this).val();
+      let url = $("#fixedForm").attr("data-sources-url");
+      let categoryId = $(this).val();
 
       $.ajax({
         url: url,

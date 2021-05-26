@@ -7,7 +7,7 @@ class IncomeForm(forms.ModelForm):
 
     class Meta:
         model = Income
-        fields = ['amount', 'date', 'description', 'category', 'source']
+        fields = ['category', 'source', 'amount', 'date', 'description']
         widgets = {
             'amount': forms.NumberInput(attrs={'step': '0.01'}),
             'date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
