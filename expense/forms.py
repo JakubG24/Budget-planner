@@ -11,7 +11,7 @@ class FixedCostForm(forms.ModelForm):
 
     class Meta:
         model = FixedCosts
-        fields = ['amount', 'date', 'description', 'category', 'source']
+        fields = ['category', 'source', 'amount', 'date', 'description']
         widgets = {
             'amount': forms.NumberInput(attrs={'step': '0.01'}),
             'date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
@@ -35,7 +35,7 @@ class VariableCostForm(forms.ModelForm):
 
     class Meta:
         model = VariableCosts
-        fields = ['amount', 'date', 'description', 'category', 'source']
+        fields = ['category', 'source', 'amount', 'date', 'description']
         widgets = {
             'amount': forms.NumberInput(attrs={'step': '0.01'}),
             'date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
